@@ -1,0 +1,23 @@
+{
+  "name": "giphy-music-mashup",
+  "version": "1.0.0",
+  "description": "Create videos out of animated gifs and songs",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fedebertolini/giphy-music-mashup.git"
+  },
+  "author": "Federico Bertolini",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fedebertolini/giphy-music-mashup/issues"
+  },
+  "homepage": "https://github.com/fedebertolini/giphy-music-mashup#readme",
+  "dependencies": {
+    "@ffmpeg-installer/ffmpeg": "^1.0.9",
+    "fluent-ffmpeg": "^2.1.0",
+    "giphy-api": "^1.2.3",
+    "soundcloud": "^3.1.2"
+  }
+}
