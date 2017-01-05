@@ -2,6 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const ffmpeg = require('../src/services/ffmpeg');
 const sampleVideoPath = process.cwd() + '/__tests__/videos/SampleVideo.mp4';
+const sampleVideoCopyPath = process.cwd() + '/__tests__/videos/SampleVideoCopy.mp4';
 const tempPath = process.cwd() + '/temp/';
 
 afterEach(() => {
@@ -21,9 +22,18 @@ test('get video metadata', () => {
 });
 
 test('resize video', () => {
-    const outputPath = tempPath + 'test-' + path.basename(sampleVideoPath);
+    const outputPath = tempPath + 'resize-video-test.mp4';
 
     return ffmpeg.resizeVideo(sampleVideoPath, outputPath).then(() => {
+        expect(fs.existsSync(outputPath)).toBeTruthy();
+    });
+});
+
+test('concat videos', () => {
+    const outputPath = tempPath + 'concat-video-test.mp4';
+    const paths = [sampleVideoPath, sampleVideoCopyPath];
+
+    return ffmpeg.concatVideos(paths, outputPath).then(() => {
         expect(fs.existsSync(outputPath)).toBeTruthy();
     });
 });

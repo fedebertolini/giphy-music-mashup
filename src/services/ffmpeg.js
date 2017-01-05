@@ -30,3 +30,18 @@ exports.resizeVideo = (videoSrc, outputPath) => {
         }).save(outputPath);
     });
 }
+
+exports.concatVideos = (videoSrcs, outputPath) => {
+    const command = ffmpeg();
+    videoSrcs.forEach(videoSrc => {
+        command.addInput(videoSrc);
+    });
+
+    return new Promise((resolve, reject) => {
+        command.on('end', () => {
+            resolve();
+        }).on('error', function(error) {
+            reject(error);
+        }).mergeToFile(outputPath);
+    });
+};
