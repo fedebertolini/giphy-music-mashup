@@ -24,7 +24,8 @@ exports.getVideoMetadata = (videoSrc) => {
 };
 
 exports.resizeVideo = (videoSrc, outputPath) => {
-    const command = ffmpeg(videoSrc).size(videoResolution).autopad();
+    const command = ffmpeg(videoSrc);
+    command.addOption('-vf','scale=500:500:force_original_aspect_ratio=decrease,pad=500:500:(ow-iw)/2:(oh-ih)/2,setsar=1:1,setdar=1:1');
 
     return new Promise((resolve, reject) => {
         command.on('end', () => {
@@ -32,11 +33,14 @@ exports.resizeVideo = (videoSrc, outputPath) => {
         }).on('error', function(error) {
             reject(error);
         })
+        .on('start', function(commandLine) {
+            //console.log(ffmpegPath + commandLine.replace('ffmpeg', ''));
+        })
         .save(outputPath);
     });
 }
 
-exports.concatVideos = (videoSrcs, outputPath) => {
+exports.concatVideos = (videoSrcs, outputPath, tempPath) => {
     const command = ffmpeg();
     videoSrcs.forEach(videoSrc => {
         command.addInput(videoSrc);
@@ -45,9 +49,11 @@ exports.concatVideos = (videoSrcs, outputPath) => {
     return new Promise((resolve, reject) => {
         command.on('end', () => {
             resolve();
+        }).on('start', function(commandLine) {
+            //console.log(ffmpegPath + commandLine.replace('ffmpeg', ''));
         }).on('error', function(error) {
             reject(error);
-        }).mergeToFile(outputPath);
+        }).mergeToFile(outputPath, tempPath);
     });
 };
 

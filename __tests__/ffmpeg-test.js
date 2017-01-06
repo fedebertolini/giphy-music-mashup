@@ -32,7 +32,7 @@ test('concat videos', () => {
     const outputPath = tempPath + 'concat-video-test.mp4';
     const paths = [sampleVideoPath, sampleVideoCopyPath];
 
-    return ffmpeg.concatVideos(paths, outputPath).then(() => {
+    return ffmpeg.concatVideos(paths, outputPath, tempPath).then(() => {
         expect(fs.existsSync(outputPath)).toBeTruthy();
     });
 });
