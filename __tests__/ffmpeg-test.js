@@ -16,8 +16,8 @@ afterEach(() => {
     });
 });
 
-test('get video metadata', () => {
-    return ffmpeg.getVideoMetadata(sampleVideoPath).then((metadata) => {
+test('get file metadata', () => {
+    return ffmpeg.getFileMetadata(sampleVideoPath).then((metadata) => {
         expect(metadata).toBeTruthy();
     });
 });

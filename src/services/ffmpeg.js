@@ -9,7 +9,7 @@ const fs = require('fs');
 ffmpeg.setFfmpegPath(ffmpegPath);
 ffmpeg.setFfprobePath(ffprobePath);
 
-exports.getVideoMetadata = (videoSrc) => {
+exports.getFileMetadata = (videoSrc) => {
     return new Promise((resolve, reject) => {
         ffmpeg.ffprobe(videoSrc, function(error, metadata) {
             if (error) {
