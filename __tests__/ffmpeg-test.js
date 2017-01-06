@@ -23,7 +23,6 @@ test('get video metadata', () => {
 
 test('resize video', () => {
     const outputPath = tempPath + 'resize-video-test.mp4';
-
     return ffmpeg.resizeVideo(sampleVideoPath, outputPath).then(() => {
         expect(fs.existsSync(outputPath)).toBeTruthy();
     });
