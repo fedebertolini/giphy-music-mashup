@@ -20,7 +20,7 @@ exports.getFileMetadata = (videoSrc) => {
     });
 };
 
-exports.resizeVideo = (videoSrc, outputPath) => {
+exports.resizeVideo = (videoSrc, outputPath, maxDuration) => {
     const command = ffmpeg(videoSrc);
     let executedCommand = '';
 
@@ -32,6 +32,10 @@ exports.resizeVideo = (videoSrc, outputPath) => {
     ].join(',');
 
     command.addOption('-vf', vfOptions);
+
+    if (maxDuration) {
+        command.outputOptions(`-to ${maxDuration}`);
+    }
 
     return new Promise((resolve, reject) => {
         command.on('end', () => {
@@ -86,7 +90,7 @@ exports.downloadVideo = (fileUrl, filePath) => {
         }).on('error', err => {
             if (responseSent) return;
             responseSent = true;
-            reject(err);
+            reject(`Error downloading ${fileUrl} - ${err}`);
         });
     });
 };
