@@ -7,18 +7,24 @@ const fs = require('fs');;
 const sampleSongPath = `${process.cwd()}/__tests__/music/jonathan-mann-i-wont-lock-it-down.mp3`;
 const giphySearchPhrase = 'snow';
 const videoCount = 5;
+let songDuration = 0;
 
 giphy.search(giphySearchPhrase).then((result) => {
     const items = result.items.slice(0, videoCount);
     const tempFiles = [];
 
-    Promise.all(items.map(item => {
-        // Download videos
-        const url = item.images.original.mp4;
-        const destPath = `${process.cwd()}/temp/${item.slug}.mp4`;
-        tempFiles.push(destPath);
-        return ffmpeg.downloadVideo(url, destPath).then(() => destPath);
-    }))
+    ffmpeg.getFileMetadata(sampleSongPath).then(metadata => {
+        // Get Audio Duration
+        songDuration = Math.ceil(metadata.format.duration);
+    }).then(() => {
+        return Promise.all(items.map(item => {
+            // Download videos
+            const url = item.images.original.mp4;
+            const destPath = `${process.cwd()}/temp/${item.slug}.mp4`;
+            tempFiles.push(destPath);
+            return ffmpeg.downloadVideo(url, destPath).then(() => destPath);
+        }));
+    })
     .then(filePaths => {
         // Resize Videos
         return Promise.all(filePaths.map(filePath => {
