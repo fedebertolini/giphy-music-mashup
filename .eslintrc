@@ -1,0 +1,19 @@
+{
+    "extends": [
+        "eslint:recommended",
+        "airbnb-base"
+    ],
+    "rules": {
+        "max-len": [2, 120, 2, {ignoreComments: true }],
+        "no-console": 0,
+        "indent": [2, 4],
+    },
+    "globals": {
+        "require": true,
+        "console": true,
+        "expect": true,
+        "beforeAll": true,
+        "test": true,
+        "afterEach": true,
+    }
+}

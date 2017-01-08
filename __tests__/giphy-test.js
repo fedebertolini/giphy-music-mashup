@@ -5,9 +5,7 @@ beforeAll(() => {
     dotenv.config();
 });
 
-test('giphy search returns results', () => {
-    return giphy.search('test').then((result) => {
-        expect(result.items.length).toBeGreaterThan(0);
-        expect(result.totalCount).toBeGreaterThanOrEqual(result.items.length);
-    });
-});
+test('giphy search returns results', () => giphy.search('test').then((result) => {
+    expect(result.items.length).toBeGreaterThan(0);
+    expect(result.totalCount).toBeGreaterThanOrEqual(result.items.length);
+}));

@@ -9,16 +9,14 @@ const fs = require('fs');
 ffmpeg.setFfmpegPath(ffmpegPath);
 ffmpeg.setFfprobePath(ffprobePath);
 
-exports.getFileMetadata = (videoSrc) => {
-    return new Promise((resolve, reject) => {
-        ffmpeg.ffprobe(videoSrc, function(error, metadata) {
-            if (error) {
-                reject(error);
-            }
-            resolve(metadata);
-        });
+exports.getFileMetadata = videoSrc => new Promise((resolve, reject) => {
+    ffmpeg.ffprobe(videoSrc, (error, metadata) => {
+        if (error) {
+            reject(error);
+        }
+        resolve(metadata);
     });
-};
+});
 
 exports.resizeVideo = (videoSrc, outputPath, maxDuration) => {
     const command = ffmpeg(videoSrc);
@@ -28,7 +26,7 @@ exports.resizeVideo = (videoSrc, outputPath, maxDuration) => {
         'scale=500:500:force_original_aspect_ratio=decrease',
         'pad=500:500:(ow-iw)/2:(oh-ih)/2',
         'setsar=1:1',
-        'setdar=1:1'
+        'setdar=1:1',
     ].join(',');
 
     command.addOption('-vf', vfOptions);
@@ -40,31 +38,31 @@ exports.resizeVideo = (videoSrc, outputPath, maxDuration) => {
     return new Promise((resolve, reject) => {
         command.on('end', () => {
             resolve();
-        }).on('error', function(error) {
+        }).on('error', (error) => {
             console.log(executedCommand);
             reject(error);
         })
-        .on('start', function(commandLine) {
+        .on('start', (commandLine) => {
             executedCommand = ffmpegPath + commandLine.replace('ffmpeg', '');
         })
         .save(outputPath);
     });
-}
+};
 
 exports.concatVideos = (videoSrcs, outputPath, tempPath) => {
     const command = ffmpeg();
     let executedCommand = '';
 
-    videoSrcs.forEach(videoSrc => {
+    videoSrcs.forEach((videoSrc) => {
         command.addInput(videoSrc);
     });
 
     return new Promise((resolve, reject) => {
         command.on('end', () => {
             resolve();
-        }).on('start', function(commandLine) {
+        }).on('start', (commandLine) => {
             executedCommand = ffmpegPath + commandLine.replace('ffmpeg', '');
-        }).on('error', function(error) {
+        }).on('error', (error) => {
             console.log(executedCommand);
             reject(error);
         }).mergeToFile(outputPath, tempPath);
@@ -78,7 +76,7 @@ exports.downloadVideo = (fileUrl, filePath) => {
         let responseSent = false;
         const httpClient = urlObject.protocol === 'http:' ? http : https;
 
-        httpClient.get(fileUrl, response => {
+        httpClient.get(fileUrl, (response) => {
             response.pipe(file);
             file.on('finish', () => {
                 file.close(() => {
@@ -87,7 +85,7 @@ exports.downloadVideo = (fileUrl, filePath) => {
                     resolve();
                 });
             });
-        }).on('error', err => {
+        }).on('error', (err) => {
             if (responseSent) return;
             responseSent = true;
             reject(`Error downloading ${fileUrl} - ${err}`);
@@ -108,11 +106,11 @@ exports.addSongToVideo = (songPath, videoPath, outputPath) => {
     return new Promise((resolve, reject) => {
         command.on('end', () => {
             resolve();
-        }).on('error', function(error) {
+        }).on('error', (error) => {
             console.log(executedCommand);
             reject(error);
         })
-        .on('start', function(commandLine) {
+        .on('start', (commandLine) => {
             executedCommand = ffmpegPath + commandLine.replace('ffmpeg', '');
         })
         .save(outputPath);
