@@ -21,6 +21,7 @@
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.0.9",
     "@ffprobe-installer/ffprobe": "^1.0.6",
+    "ccmixter-js": "^1.0.2",
     "dotenv": "^2.0.0",
     "fluent-ffmpeg": "^2.1.0",
     "giphy-api": "^1.2.3"

@@ -1,4 +1,5 @@
 node_modules/
 *.log
 .env
-temp/*.mp4
+temp/
+!temp/.gitkeep

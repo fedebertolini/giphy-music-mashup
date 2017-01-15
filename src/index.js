@@ -4,12 +4,14 @@ const giphy = require('./services/giphy');
 const ffmpeg = require('./services/ffmpeg');
 const fileDownload = require('./services/fileDownload');
 const fs = require('fs');
+const ccmixter = require('ccmixter-js');
 
-const sampleSongPath = `${process.cwd()}/__tests__/music/jonathan-mann-i-wont-lock-it-down.mp3`;
 const giphySearchPhrase = 'trippy';
+const ccmixterSearchPhrase = 'psychedelic';
 const videoCount = 5;
 const maxGiphyVideoDuration = 5;
 let songDuration = 0;
+let songPath = '';
 const tempFiles = [];
 const videosMetadata = [];
 
@@ -73,6 +75,23 @@ const loopVideo = videoPath => ffmpeg.getFileMetadata(videoPath).then((metadata)
     return videoPath;
 });
 
+const getRandomSong = phrase => {
+    return ccmixter.searchSongs({
+        searchPhrase: phrase,
+        limit: 50,
+    }).then(result => {
+        const items = result.items.filter(item => item.files.length > 0);
+        const random = Math.floor(Math.random() * items.length);
+        return items[random].files[0];
+    });
+};
+
+const downloadSong = songInfo => {
+    const destPath = `${process.cwd()}/temp/${songInfo.file_name}`;
+    tempFiles.push(destPath);
+    return fileDownload(songInfo.download_url, destPath).then(() => destPath);
+}
+
 const deleteFiles = (files) => {
     files.forEach((file) => {
         try {
@@ -83,12 +102,23 @@ const deleteFiles = (files) => {
     });
 };
 
-ffmpeg.getFileMetadata(sampleSongPath)
-.then((metadata) => {
+getRandomSong(ccmixterSearchPhrase)
+.then(songInfo => {
+    console.log(`Downloading random song: ${songInfo.file_name}`);
+    return downloadSong(songInfo);
+})
+.then(path => {
+    songPath = path;
+    console.log(`Song downloaded successfully. Retrieving song metadata.`)
+    return ffmpeg.getFileMetadata(path);
+})
+.then(metadata => {
     songDuration = Math.ceil(metadata.format.duration);
 
+    console.log(`Searching giphys`);
     return giphy.search(giphySearchPhrase);
-}).then(result => downloadVideosUntilAudioDurationIsMet(result.items, songDuration))
+})
+.then(result => downloadVideosUntilAudioDurationIsMet(result.items, songDuration))
 .then(() => {
     console.log('resizing videos');
     const filePaths = videosMetadata.map(metadata => metadata.format.filename);
@@ -105,7 +135,7 @@ ffmpeg.getFileMetadata(sampleSongPath)
 .then((loopedVideoPath) => {
     console.log('adding audio to looped video');
     const videoWithMusicPath = loopedVideoPath.replace('.mp4', '-music.mp4');
-    return ffmpeg.addSongToVideo(sampleSongPath, loopedVideoPath, videoWithMusicPath);
+    return ffmpeg.addSongToVideo(songPath, loopedVideoPath, videoWithMusicPath);
 })
 .then(() => {
     deleteFiles(tempFiles);
