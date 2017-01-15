@@ -102,6 +102,15 @@ const deleteFiles = (files) => {
     });
 };
 
+const shuffleArray = (array) => {
+    const a = array.slice(0);
+    for (let i = a.length; i; i--) {
+        let j = Math.floor(Math.random() * i);
+        [a[i - 1], a[j]] = [a[j], a[i - 1]];
+    }
+    return a;
+};
+
 getRandomSong(ccmixterSearchPhrase)
 .then(songInfo => {
     console.log(`Downloading random song: ${songInfo.file_name}`);
@@ -118,7 +127,7 @@ getRandomSong(ccmixterSearchPhrase)
     console.log(`Searching giphys`);
     return giphy.search(giphySearchPhrase);
 })
-.then(result => downloadVideosUntilAudioDurationIsMet(result.items, songDuration))
+.then(result => downloadVideosUntilAudioDurationIsMet(shuffleArray(result.items), songDuration))
 .then(() => {
     console.log('resizing videos');
     const filePaths = videosMetadata.map(metadata => metadata.format.filename);
