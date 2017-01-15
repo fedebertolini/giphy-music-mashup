@@ -2,6 +2,7 @@ require('dotenv').config();
 
 const giphy = require('./services/giphy');
 const ffmpeg = require('./services/ffmpeg');
+const fileDownload = require('./services/fileDownload');
 const fs = require('fs');
 
 const sampleSongPath = `${process.cwd()}/__tests__/music/jonathan-mann-i-wont-lock-it-down.mp3`;
@@ -16,7 +17,7 @@ const downloadVideos = videos => Promise.all(videos.map((video) => {
     const url = video.images.original.mp4;
     const destPath = `${process.cwd()}/temp/${video.slug}.mp4`;
     tempFiles.push(destPath);
-    return ffmpeg.downloadVideo(url, destPath)
+    return fileDownload(url, destPath)
             .then(() => destPath)
             .catch(() => null); // ignore error
 })).then(filePaths => filePaths.filter(path => !!path));

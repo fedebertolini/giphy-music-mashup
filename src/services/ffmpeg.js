@@ -1,10 +1,6 @@
 const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
 const ffprobePath = require('@ffprobe-installer/ffprobe').path;
 const ffmpeg = require('fluent-ffmpeg');
-const url = require('url');
-const http = require('http');
-const https = require('https');
-const fs = require('fs');
 
 ffmpeg.setFfmpegPath(ffmpegPath);
 ffmpeg.setFfprobePath(ffprobePath);
@@ -66,30 +62,6 @@ exports.concatVideos = (videoSrcs, outputPath, tempPath) => {
             console.log(executedCommand);
             reject(error);
         }).mergeToFile(outputPath, tempPath);
-    });
-};
-
-exports.downloadVideo = (fileUrl, filePath) => {
-    const urlObject = url.parse(fileUrl);
-    const file = fs.createWriteStream(filePath);
-    return new Promise((resolve, reject) => {
-        let responseSent = false;
-        const httpClient = urlObject.protocol === 'http:' ? http : https;
-
-        httpClient.get(fileUrl, (response) => {
-            response.pipe(file);
-            file.on('finish', () => {
-                file.close(() => {
-                    if (responseSent) return;
-                    responseSent = true;
-                    resolve();
-                });
-            });
-        }).on('error', (err) => {
-            if (responseSent) return;
-            responseSent = true;
-            reject(`Error downloading ${fileUrl} - ${err}`);
-        });
     });
 };
 
