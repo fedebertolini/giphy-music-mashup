@@ -125,9 +125,13 @@ getRandomSong(ccmixterSearchPhrase)
     songDuration = Math.ceil(metadata.format.duration);
 
     console.log(`Searching giphys`);
-    return giphy.search(giphySearchPhrase);
+    return Promise.all([
+        giphy.search(giphySearchPhrase, 100 , 0),
+        giphy.search(giphySearchPhrase, 100 , 100),
+        giphy.search(giphySearchPhrase, 100 , 200),
+    ]).then(result => result[0].items.concat(result[1].items).concat(result[2].items));
 })
-.then(result => downloadVideosUntilAudioDurationIsMet(shuffleArray(result.items), songDuration))
+.then(items => downloadVideosUntilAudioDurationIsMet(shuffleArray(items), songDuration))
 .then(() => {
     console.log('resizing videos');
     const filePaths = videosMetadata.map(metadata => metadata.format.filename);
