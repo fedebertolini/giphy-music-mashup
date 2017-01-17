@@ -7,6 +7,7 @@
         "max-len": [2, 120, 2, {ignoreComments: true }],
         "no-console": 0,
         "indent": [2, 4],
+        "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }]
     },
     "globals": {
         "require": true,

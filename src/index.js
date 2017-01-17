@@ -80,22 +80,20 @@ const loopVideo = videoPath => ffmpeg.getFileMetadata(videoPath).then((metadata)
     return videoPath;
 });
 
-const getRandomSong = phrase => {
-    return ccmixter.searchSongs({
-        searchPhrase: phrase,
-        limit: 50,
-    }).then(result => {
-        const items = result.items.filter(item => item.files.length > 0);
-        const random = Math.floor(Math.random() * items.length);
-        return items[random].files[0];
-    });
-};
+const getRandomSong = phrase => ccmixter.searchSongs({
+    searchPhrase: phrase,
+    limit: 50,
+}).then((result) => {
+    const items = result.items.filter(item => item.files.length > 0);
+    const random = Math.floor(Math.random() * items.length);
+    return items[random].files[0];
+});
 
-const downloadSong = songInfo => {
+const downloadSong = (songInfo) => {
     const destPath = `${process.cwd()}/temp/${songInfo.file_name}`;
     tempFiles.push(destPath);
     return fileDownload(songInfo.download_url, destPath).then(() => destPath);
-}
+};
 
 const deleteFiles = (files) => {
     files.forEach((file) => {
@@ -110,30 +108,30 @@ const deleteFiles = (files) => {
 const shuffleArray = (array) => {
     const a = array.slice(0);
     for (let i = a.length; i; i--) {
-        let j = Math.floor(Math.random() * i);
+        const j = Math.floor(Math.random() * i);
         [a[i - 1], a[j]] = [a[j], a[i - 1]];
     }
     return a;
 };
 
 getRandomSong(ccmixterSearchPhrase)
-.then(songInfo => {
+.then((songInfo) => {
     console.log(`Downloading random song: ${songInfo.file_name}`);
     return downloadSong(songInfo);
 })
-.then(path => {
+.then((path) => {
     songPath = path;
-    console.log(`Song downloaded successfully. Retrieving song metadata.`)
+    console.log('Song downloaded successfully. Retrieving song metadata.');
     return ffmpeg.getFileMetadata(path);
 })
-.then(metadata => {
+.then((metadata) => {
     songDuration = Math.ceil(metadata.format.duration);
 
-    console.log(`Searching giphys`);
+    console.log('Searching giphys');
     return Promise.all([
-        giphy.search(giphySearchPhrase, 100 , 0),
-        giphy.search(giphySearchPhrase, 100 , 100),
-        giphy.search(giphySearchPhrase, 100 , 200),
+        giphy.search(giphySearchPhrase, 100, 0),
+        giphy.search(giphySearchPhrase, 100, 100),
+        giphy.search(giphySearchPhrase, 100, 200),
     ]).then(result => result[0].items.concat(result[1].items).concat(result[2].items));
 })
 .then(items => downloadVideosUntilAudioDurationIsMet(shuffleArray(items), songDuration))
