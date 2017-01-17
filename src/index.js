@@ -5,15 +5,20 @@ const ffmpeg = require('./services/ffmpeg');
 const fileDownload = require('./services/fileDownload');
 const fs = require('fs');
 const ccmixter = require('ccmixter-js');
+const args = require('minimist')(process.argv.slice(2));
 
-const giphySearchPhrase = 'trippy';
-const ccmixterSearchPhrase = 'psychedelic';
+const giphySearchPhrase = args.giphy || 'trippy';
+const ccmixterSearchPhrase = args.ccmixter || 'psychedelic';
 const videoCount = 5;
 const maxGiphyVideoDuration = 5;
 let songDuration = 0;
 let songPath = '';
 const tempFiles = [];
 const videosMetadata = [];
+
+console.log('Starting mashup');
+console.log(`Giphy search term: ${giphySearchPhrase}`);
+console.log(`ccmixter search term: ${ccmixterSearchPhrase}`);
 
 const downloadVideos = videos => Promise.all(videos.map((video) => {
     const url = video.images.original.mp4;

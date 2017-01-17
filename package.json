@@ -24,7 +24,8 @@
     "ccmixter-js": "^1.0.2",
     "dotenv": "^2.0.0",
     "fluent-ffmpeg": "^2.1.0",
-    "giphy-api": "^1.2.3"
+    "giphy-api": "^1.2.3",
+    "minimist": "^1.2.0"
   },
   "devDependencies": {
     "eslint": "^3.13.0",
