@@ -15,6 +15,7 @@ let songDuration = 0;
 let songPath = '';
 const tempFiles = [];
 const videosMetadata = [];
+const tempFolder = `${process.cwd()}/temp/`;
 
 console.log('Starting mashup');
 console.log(`Giphy search term: ${giphySearchPhrase}`);
@@ -22,7 +23,7 @@ console.log(`ccmixter search term: ${ccmixterSearchPhrase}`);
 
 const downloadVideos = videos => Promise.all(videos.map((video) => {
     const url = video.images.original.mp4;
-    const destPath = `${process.cwd()}/temp/${video.slug}.mp4`;
+    const destPath = `${tempFolder}${video.slug}.mp4`;
     tempFiles.push(destPath);
     return fileDownload(url, destPath)
             .then(() => destPath)
@@ -37,9 +38,9 @@ const resizeVideos = filePaths => Promise.all(filePaths.map((filePath) => {
 
 const concatVideos = (filePaths) => {
     const timestamp = (new Date()).getTime();
-    const concatedVideoPath = `${process.cwd()}/temp/_${timestamp}.mp4`;
+    const concatedVideoPath = `${tempFolder}_${timestamp}.mp4`;
     tempFiles.push(concatedVideoPath);
-    return ffmpeg.concatVideos(filePaths, concatedVideoPath, `${process.cwd()}/temp/`).then(() => concatedVideoPath);
+    return ffmpeg.concatVideos(filePaths, concatedVideoPath, tempFolder).then(() => concatedVideoPath);
 };
 
 const getFilesMetadata = filePaths => Promise.all(filePaths.map(file => ffmpeg.getFileMetadata(file).catch(() => {
@@ -90,7 +91,7 @@ const getRandomSong = phrase => ccmixter.searchSongs({
 });
 
 const downloadSong = (songInfo) => {
-    const destPath = `${process.cwd()}/temp/${songInfo.file_name}`;
+    const destPath = `${tempFolder}${songInfo.file_name}`;
     tempFiles.push(destPath);
     return fileDownload(songInfo.download_url, destPath).then(() => destPath);
 };
@@ -150,7 +151,7 @@ getRandomSong(ccmixterSearchPhrase)
 })
 .then((loopedVideoPath) => {
     console.log('adding audio to looped video');
-    const videoWithMusicPath = loopedVideoPath.replace('.mp4', '-music.mp4');
+    const videoWithMusicPath = args.output || loopedVideoPath.replace('.mp4', '-music.mp4');
     return ffmpeg.addSongToVideo(songPath, loopedVideoPath, videoWithMusicPath);
 })
 .then(() => {
