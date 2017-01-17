@@ -1,6 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const ffmpeg = require('../src/services/ffmpeg');
+const ffprobePath = require('@ffprobe-installer/ffprobe').path;
 
 const sampleVideoPath = `${process.cwd()}/__tests__/videos/SampleVideo.mp4`;
 const sampleVideoCopyPath = `${process.cwd()}/__tests__/videos/SampleVideoCopy.mp4`;
@@ -17,9 +18,19 @@ afterEach(() => {
     });
 });
 
-test('get file metadata', () => ffmpeg.getFileMetadata(sampleVideoPath).then((metadata) => {
-    expect(metadata).toBeTruthy();
-}));
+test('get file metadata', () => {
+    ffmpeg.getFileMetadata(sampleVideoPath)
+    .then((metadata) => {
+        expect(metadata).toBeTruthy();
+    })
+    .catch((error) => {
+        if (error.message.indexOf('EACCES') >= 0) {
+            console.log('Permission denied to execute ffprobe');
+            console.log(`Please check the execution permissions of ${ffprobePath}`);
+        }
+        throw error;
+    });
+});
 
 test('resize video', () => {
     const outputPath = `${tempPath}resize-video-test.mp4`;
