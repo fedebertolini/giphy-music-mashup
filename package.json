@@ -21,10 +21,10 @@
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.0.20",
     "@ffprobe-installer/ffprobe": "^1.0.12",
+    "axios": "^0.19.2",
     "ccmixter-js": "^1.1.0",
     "dotenv": "^8.2.0",
     "fluent-ffmpeg": "^2.1.2",
-    "giphy-api": "^2.0.1",
     "minimist": "^1.2.5"
   },
   "devDependencies": {
