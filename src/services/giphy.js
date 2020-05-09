@@ -6,7 +6,7 @@ exports.search = (phrase, limit = 100, offset = 0) => {
         limit,
         offset,
     };
-    return giphy.search(options).then(result => ({
+    return giphy.search(options).then((result) => ({
         items: result.data,
         totalCount: result.pagination.total_count,
     }));

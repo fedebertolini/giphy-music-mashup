@@ -5,7 +5,7 @@ const ffmpeg = require('fluent-ffmpeg');
 ffmpeg.setFfmpegPath(ffmpegPath);
 ffmpeg.setFfprobePath(ffprobePath);
 
-exports.getFileMetadata = videoSrc => new Promise((resolve, reject) => {
+exports.getFileMetadata = (videoSrc) => new Promise((resolve, reject) => {
     ffmpeg.ffprobe(videoSrc, (error, metadata) => {
         if (error) {
             reject(error);
@@ -38,10 +38,10 @@ exports.resizeVideo = (videoSrc, outputPath, maxDuration) => {
             console.log(executedCommand);
             reject(error);
         })
-        .on('start', (commandLine) => {
-            executedCommand = ffmpegPath + commandLine.replace('ffmpeg', '');
-        })
-        .save(outputPath);
+            .on('start', (commandLine) => {
+                executedCommand = ffmpegPath + commandLine.replace('ffmpeg', '');
+            })
+            .save(outputPath);
     });
 };
 
@@ -82,9 +82,9 @@ exports.addSongToVideo = (songPath, videoPath, outputPath) => {
             console.log(executedCommand);
             reject(error);
         })
-        .on('start', (commandLine) => {
-            executedCommand = ffmpegPath + commandLine.replace('ffmpeg', '');
-        })
-        .save(outputPath);
+            .on('start', (commandLine) => {
+                executedCommand = ffmpegPath + commandLine.replace('ffmpeg', '');
+            })
+            .save(outputPath);
     });
 };

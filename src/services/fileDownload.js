@@ -22,7 +22,7 @@ module.exports = (fileUrl, filePath) => {
         }).on('error', (err) => {
             if (responseSent) return;
             responseSent = true;
-            reject(`Error downloading ${fileUrl} - ${err}`);
+            reject(new Error(`Error downloading ${fileUrl} - ${err}`));
         });
     });
 };
