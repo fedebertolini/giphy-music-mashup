@@ -1,6 +1,6 @@
 {
   "name": "giphy-music-mashup",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Create videos out of animated gifs and songs",
   "main": "src/index.js",
   "scripts": {
